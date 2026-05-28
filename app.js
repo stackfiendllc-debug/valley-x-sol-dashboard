@@ -4,28 +4,43 @@ const addressEl = document.getElementById("address");
 const balanceEl = document.getElementById("balance");
 
 async function connectWallet() {
-  if (window.solana && window.solana.isPhantom) {
-    try {
-      const response = await window.solana.connect();
+  try {
+    const provider = window.phantom?.solana || window.solana;
 
-      const publicKey = response.publicKey.toString();
-      addressEl.textContent = publicKey;
-
-      const connection = new solanaWeb3.Connection(
-        "https://api.mainnet-beta.solana.com"
-      );
-
-      const balance = await connection.getBalance(response.publicKey);
-
-      balanceEl.textContent = (balance / 1000000000).toFixed(4);
-
-      walletInfo.style.display = "block";
-
-    } catch (err) {
-      console.error("Wallet connection failed:", err);
+    if (!provider || !provider.isPhantom) {
+      alert("Open inside Phantom browser");
+      return;
     }
-  } else {
-    window.open("https://phantom.app/", "_blank");
+
+    const resp = await provider.connect();
+
+    if (!resp.publicKey) {
+      alert("Wallet connection failed");
+      return;
+    }
+
+    const publicKey = resp.publicKey.toString();
+
+    addressEl.textContent = publicKey;
+
+    walletInfo.style.display = "block";
+
+    balanceEl.textContent = "Loading...";
+
+    const connection = new solanaWeb3.Connection(
+      "https://api.mainnet-beta.solana.com",
+      "confirmed"
+    );
+
+    const lamports = await connection.getBalance(resp.publicKey);
+
+    balanceEl.textContent = (lamports / 1000000000).toFixed(4) + " SOL";
+
+    connectButton.textContent = "Connected";
+
+  } catch (err) {
+    console.error(err);
+    alert("Connection error: " + err.message);
   }
 }
 
