@@ -1,4 +1,5 @@
-<!-- index.html --><!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,18 +8,25 @@
   <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
 </head>
 <body>
+
   <div class="card">
     <img src="logo0.png" alt="Valley X Logo">
+
     <h1>Valley X SOL Dashboard</h1>
+
     <button id="connect">Connect Phantom</button>
+
     <div class="info" id="walletInfo" style="display:none;">
       <p><strong>Wallet:</strong></p>
       <p class="small" id="address"></p>
-      <p><strong>SOL Balance:</strong> <span id="balance">0</span></p>
+
+      <p><strong>SOL Balance:</strong>
+        <span id="balance">0</span>
+      </p>
     </div>
   </div>
-<script src="app.js"></script>
-</body>
-</html>/* style.css */ body{margin:0;font-family:Arial,sans-serif;background:#05070d;color:#fff;display:flex;justify-content:center;align-items:center;min-height:100vh}.card{width:420px;background:#111827;border:1px solid #00f0ff33;border-radius:20px;padding:28px;box-shadow:0 0 35px #00f0ff22;text-align:center}img{width:120px;margin-bottom:20px}h1{color:#00f0ff}button{background:#00f0ff;color:#000;border:none;padding:14px 22px;border-radius:12px;font-weight:700;cursor:pointer}.info{margin-top:20px;text-align:left;background:#0b1220;padding:16px;border-radius:14px}.small{font-size:14px;color:#9ca3af;word-break:break-all}
 
-// app.js const btn=document.getElementById('connect');const info=document.getElementById('walletInfo');async function connectWallet(){if(window.solana&&window.solana.isPhantom){const resp=await window.solana.connect();document.getElementById('address').textContent=resp.publicKey.toString();const conn=new solanaWeb3.Connection('https://api.mainnet-beta.solana.com');const bal=await conn.getBalance(resp.publicKey);document.getElementById('balance').textContent=(bal/1000000000).toFixed(4);info.style.display='block';}else{window.open('https://phantom.app/','_blank')}}btn.addEventListener('click',connectWallet);
+  <script src="app.js"></script>
+
+</body>
+</html>
