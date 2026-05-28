@@ -22,7 +22,7 @@ async function fetchBalance(walletAddress) {
 
     const data = await response.json();
 
-    if (data.result && data.result.value !== undefined) {
+    if (data.result?.value !== undefined) {
       const sol = data.result.value / 1000000000;
       balanceEl.textContent = `${sol.toFixed(4)} SOL`;
     } else {
@@ -35,34 +35,47 @@ async function fetchBalance(walletAddress) {
   }
 }
 
+function displayWallet(walletAddress, buttonText = "Connected") {
+  walletInfo.style.display = "block";
+
+  addressEl.textContent =
+    walletAddress.slice(0, 6) +
+    "..." +
+    walletAddress.slice(-4);
+
+  connectButton.textContent = buttonText;
+
+  fetchBalance(walletAddress);
+}
+
 async function connectWallet() {
   try {
     const provider = window.solana;
 
     if (!provider?.isPhantom) {
-      alert("Open inside Phantom browser");
+      alert("Open inside Phantom browser to connect");
       return;
     }
 
     const response = await provider.connect();
-
     const walletAddress = response.publicKey.toString();
 
-    walletInfo.style.display = "block";
+    localStorage.setItem("walletAddress", walletAddress);
 
-    addressEl.textContent =
-      walletAddress.slice(0, 6) +
-      "..." +
-      walletAddress.slice(-4);
-
-    connectButton.textContent = "Connected";
-
-    await fetchBalance(walletAddress);
+    displayWallet(walletAddress);
 
   } catch (err) {
     console.error(err);
     balanceEl.textContent = "Connection failed";
   }
 }
+
+window.onload = () => {
+  const savedWallet = localStorage.getItem("walletAddress");
+
+  if (savedWallet) {
+    displayWallet(savedWallet, "Saved Wallet");
+  }
+};
 
 connectButton.addEventListener("click", connectWallet);
