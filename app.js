@@ -3,28 +3,35 @@ const walletInfo = document.getElementById("walletInfo");
 const addressEl = document.getElementById("address");
 const balanceEl = document.getElementById("balance");
 
-const RPC_URL = "https://solana-mainnet.g.alchemy.com/v2/demo";
-
 async function fetchBalance(walletAddress) {
   try {
     balanceEl.textContent = "Loading...";
 
-    const connection = new solanaWeb3.Connection(
-      RPC_URL,
-      "confirmed"
-    );
+    const response = await fetch("https://api.mainnet-beta.solana.com", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: 1,
+        method: "getBalance",
+        params: [walletAddress]
+      })
+    });
 
-    const publicKey = new solanaWeb3.PublicKey(walletAddress);
+    const data = await response.json();
 
-    const lamports = await connection.getBalance(publicKey);
-
-    const sol = lamports / solanaWeb3.LAMPORTS_PER_SOL;
-
-    balanceEl.textContent = `${sol.toFixed(4)} SOL`;
+    if (data.result && data.result.value !== undefined) {
+      const sol = data.result.value / 1000000000;
+      balanceEl.textContent = `${sol.toFixed(4)} SOL`;
+    } else {
+      balanceEl.textContent = "0.0000 SOL";
+    }
 
   } catch (error) {
     console.error(error);
-    balanceEl.textContent = "0.0000 SOL";
+    balanceEl.textContent = "RPC Error";
   }
 }
 
