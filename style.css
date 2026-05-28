@@ -1,62 +1,104 @@
-body {
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
   font-family: Arial, sans-serif;
-  background: #090909;
+  background: linear-gradient(180deg, #050505, #111111);
   color: white;
-  text-align: center;
+  min-height: 100vh;
 }
 
 header {
-  padding: 20px;
-  background: #111;
-  border-bottom: 2px solid #00ffcc;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.95);
+  border-bottom: 1px solid #00ffcc;
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.2);
 }
 
 .logo {
-  width: 80px;
-  margin-bottom: 10px;
+  width: 42px;
+  height: auto;
 }
 
 h1 {
-  font-size: 24px;
+  font-size: 20px;
   color: #00ffcc;
+  letter-spacing: 1px;
 }
 
 .app-container {
-  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
 }
 
 .wallet-panel {
-  max-width: 500px;
-  margin: auto;
+  width: 100%;
+  max-width: 420px;
 }
 
 button {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 14px;
   background: #00ffcc;
   color: black;
-  border: none;
-  padding: 15px 30px;
-  border-radius: 12px;
-  font-size: 18px;
+  font-size: 16px;
+  font-weight: bold;
   cursor: pointer;
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.35);
+}
+
+button:hover {
+  transform: scale(1.02);
 }
 
 .wallet-card {
-  margin-top: 25px;
-  padding: 20px;
-  background: #161616;
+  margin-top: 22px;
+  background: rgba(18, 18, 18, 0.95);
   border: 1px solid #00ffcc;
-  border-radius: 15px;
-  word-wrap: break-word;
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 0 30px rgba(0, 255, 204, 0.12);
+}
+
+.wallet-card h3 {
+  color: #00ffcc;
+  margin-bottom: 15px;
 }
 
 #address {
   font-size: 14px;
-  color: #aaa;
+  color: #a0a0a0;
+  margin-bottom: 14px;
+  word-break: break-all;
 }
 
 #balance {
-  font-size: 24px;
+  font-size: 28px;
+  font-weight: bold;
   color: #00ffcc;
-  margin-top: 15px;
+}
+
+@media (max-width: 600px) {
+  .logo {
+    width: 36px;
+  }
+
+  h1 {
+    font-size: 18px;
+  }
+
+  #balance {
+    font-size: 24px;
+  }
 }
