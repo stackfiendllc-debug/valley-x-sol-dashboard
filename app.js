@@ -3,49 +3,50 @@ const walletInfo = document.getElementById("walletInfo");
 const addressEl = document.getElementById("address");
 const balanceEl = document.getElementById("balance");
 
+const connection = new solanaWeb3.Connection(
+  "https://api.mainnet-beta.solana.com",
+  "confirmed"
+);
+
+async function updateBalance(pubKey) {
+  try {
+    const lamports = await connection.getBalance(pubKey);
+    const sol = lamports / solanaWeb3.LAMPORTS_PER_SOL;
+    balanceEl.textContent = `${sol.toFixed(4)} SOL`;
+  } catch (err) {
+    balanceEl.textContent = "Balance unavailable";
+    console.error(err);
+  }
+}
+
 async function connectWallet() {
   try {
     const provider = window.solana;
 
-    if (!provider || !provider.isPhantom) {
-      alert("Please open inside Phantom browser");
+    if (!provider?.isPhantom) {
+      alert("Open this inside Phantom browser");
       return;
     }
 
-    const response = await provider.connect({
-      onlyIfTrusted: false
-    });
-
-    const publicKey = response.publicKey.toString();
+    const resp = await provider.connect();
 
     walletInfo.style.display = "block";
-    addressEl.textContent = publicKey;
 
-    connectButton.innerText = "Connected";
+    addressEl.textContent =
+      resp.publicKey.toString().slice(0, 6) +
+      "..." +
+      resp.publicKey.toString().slice(-4);
 
-    balanceEl.textContent = "Connected to Phantom";
+    connectButton.textContent = "Connected";
+
+    balanceEl.textContent = "Loading balance...";
+
+    await updateBalance(resp.publicKey);
 
   } catch (err) {
     console.error(err);
-    alert("Connection failed: " + err.message);
+    alert("Connection failed");
   }
 }
 
-connectButton.onclick = connectWallet;
-
-window.addEventListener("load", async () => {
-  if (window.solana?.isPhantom) {
-    try {
-      const resp = await window.solana.connect({
-        onlyIfTrusted: true
-      });
-
-      if (resp.publicKey) {
-        walletInfo.style.display = "block";
-        addressEl.textContent = resp.publicKey.toString();
-        connectButton.innerText = "Connected";
-        balanceEl.textContent = "Wallet Restored";
-      }
-    } catch {}
-  }
-});
+connectButton.addEventListener("click", connectWallet);
