@@ -3,19 +3,24 @@ const walletInfo = document.getElementById("walletInfo");
 const addressEl = document.getElementById("address");
 const balanceEl = document.getElementById("balance");
 
-const connection = new solanaWeb3.Connection(
-  "https://api.mainnet-beta.solana.com",
-  "confirmed"
-);
-
-async function updateBalance(pubKey) {
+async function fetchBalance(walletAddress) {
   try {
-    const lamports = await connection.getBalance(pubKey);
-    const sol = lamports / solanaWeb3.LAMPORTS_PER_SOL;
-    balanceEl.textContent = `${sol.toFixed(4)} SOL`;
-  } catch (err) {
-    balanceEl.textContent = "Balance unavailable";
-    console.error(err);
+    const connection = new solanaWeb3.Connection(
+      "https://api.mainnet-beta.solana.com",
+      "confirmed"
+    );
+
+    const publicKey = new solanaWeb3.PublicKey(walletAddress);
+
+    const lamports = await connection.getBalance(publicKey);
+
+    const solBalance = lamports / solanaWeb3.LAMPORTS_PER_SOL;
+
+    balanceEl.textContent = `${solBalance.toFixed(4)} SOL`;
+
+  } catch (error) {
+    console.error(error);
+    balanceEl.textContent = "Balance load failed";
   }
 }
 
@@ -23,29 +28,31 @@ async function connectWallet() {
   try {
     const provider = window.solana;
 
-    if (!provider?.isPhantom) {
-      alert("Open this inside Phantom browser");
+    if (!provider || !provider.isPhantom) {
+      alert("Open inside Phantom browser");
       return;
     }
 
-    const resp = await provider.connect();
+    const response = await provider.connect();
+
+    const walletAddress = response.publicKey.toString();
 
     walletInfo.style.display = "block";
 
     addressEl.textContent =
-      resp.publicKey.toString().slice(0, 6) +
+      walletAddress.slice(0, 8) +
       "..." +
-      resp.publicKey.toString().slice(-4);
+      walletAddress.slice(-8);
 
     connectButton.textContent = "Connected";
 
     balanceEl.textContent = "Loading balance...";
 
-    await updateBalance(resp.publicKey);
+    await fetchBalance(walletAddress);
 
   } catch (err) {
     console.error(err);
-    alert("Connection failed");
+    balanceEl.textContent = "Connection error";
   }
 }
 
